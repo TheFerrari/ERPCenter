@@ -1,0 +1,59 @@
+{% extends "webui/base.html" %}
+{% block content %}
+  <section>
+    <h2>Orders</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="create_order" value="1" />
+      <button type="submit">Create Draft Order</button>
+    </form>
+
+    <h3>Add Line</h3>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="add_line" value="1" />
+      {{ line_form.as_p }}
+      <button type="submit">Add Line</button>
+    </form>
+
+    <h3>Submit/Fulfill</h3>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="order_action" value="1" />
+      {{ action_form.as_p }}
+      <button type="submit">Run Action</button>
+    </form>
+
+    <h3>Existing Orders</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Lines</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.created_at }}</td>
+            <td>
+              <ul>
+                {% for line in order.lines %}
+                  <li>Item {{ line.item_id }}: {{ line.qty }}</li>
+                {% empty %}
+                  <li>No lines</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No orders found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}
