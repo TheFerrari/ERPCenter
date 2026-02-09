@@ -1,0 +1,73 @@
+{% extends "webui/base.html" %}
+
+{% block content %}
+  <h2>Orders</h2>
+
+  <section>
+    <h3>Create Order</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ create_form.as_p }}
+      <button type="submit" name="create_order">Create</button>
+    </form>
+  </section>
+
+  <section>
+    <h3>Add Line</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ add_line_form.as_p }}
+      <button type="submit" name="add_line">Add Line</button>
+    </form>
+  </section>
+
+  <section>
+    <h3>Submit Order</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ submit_form.as_p }}
+      <button type="submit" name="submit_order">Submit</button>
+    </form>
+  </section>
+
+  <section>
+    <h3>Fulfill Order</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ fulfill_form.as_p }}
+      <button type="submit" name="fulfill_order">Fulfill</button>
+    </form>
+  </section>
+
+  <section>
+    <h3>Order List</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Created At</th>
+          <th>Lines</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.created_at }}</td>
+            <td>
+              {% for line in order.lines %}
+                <div>Item {{ line.item_id }}: {{ line.qty }}</div>
+              {% empty %}
+                <div>No lines</div>
+              {% endfor %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No orders found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

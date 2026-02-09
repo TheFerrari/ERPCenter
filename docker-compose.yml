@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api_fastapi:
+    build: ./api_fastapi
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      API_JWT_SECRET: ${API_JWT_SECRET}
+      DATABASE_HOST: postgres
+    depends_on:
+      - postgres
+    ports:
+      - "8001:8001"
+
+  portal_django:
+    build: ./portal_django
+    environment:
+      API_BASE_URL: ${API_BASE_URL}
+      DJANGO_SECRET_KEY: dev-secret-change-me
+    depends_on:
+      - api_fastapi
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
